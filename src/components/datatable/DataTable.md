@@ -58,9 +58,15 @@ function Component() {
     alert(_savedFile);
   };
 
+  const onEdit = (content) => {
+    console.log("onEdit: Autosave...");
+    console.log({content});
+  };
+
   const onValidate = () => {
     alert("Validate!")
-  }
+  };
+
   const generateRowId = (rowData) => {
     const [chapter] = rowData[2].split(delimiters.cell);
     const [verse] = rowData[3].split(delimiters.cell);
@@ -73,6 +79,7 @@ function Component() {
       sourceFile={sourceFile}
       targetFile={savedFile}
       onSave={onSave}
+      onEdit={onEdit}
       onValidate={onValidate}
       delimiters={delimiters}
       config={config}

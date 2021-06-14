@@ -54,9 +54,11 @@ function RowMenu({
   return (
     <div className={classes.root}>
       <Tooltip title={localString('MoveRowUp')} arrow>
-        <IconButton className={classes.flipY} disabled={disableMoveAbove} onClick={handleMoveAbove}>
-          <ArrowDropDownCircleOutlined />
-        </IconButton>
+        <div>
+          <IconButton className={classes.flipY} disabled={disableMoveAbove} onClick={handleMoveAbove}>
+            <ArrowDropDownCircleOutlined />
+          </IconButton>
+        </div>
       </Tooltip>
       <AddRow
         rowData={rowData}

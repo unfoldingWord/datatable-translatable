@@ -1,5 +1,5 @@
 import React, {
-  useState, useReducer, useEffect, useMemo, useCallback,
+  useState, useReducer, useEffect, useMemo,
 } from 'react';
 import isEqual from 'lodash.isequal';
 import useDeepEffect from 'use-deep-compare-effect';
@@ -65,7 +65,7 @@ export function DataTableContextProvider({
   const [columnNames, setColumnNames] = useState({});
   const [columnsFilterOptions, setColumnsFilterOptions] = useState([]);
 
-  
+
   // populate columnsFilterOptions when ready
   useEffect(() => {
     if (columnsFilter && columnNames && Object.keys(data).length) {
@@ -140,7 +140,7 @@ export function DataTableContextProvider({
       columnNames, rows: targetRows, delimiters,
     }),
     setChanged,
-  }), [columnNames, delimiters, targetRows, data]);
+  }), [columnNames, delimiters, targetRows]);
 
   const value = useMemo(() => deepFreeze({
     state: {
