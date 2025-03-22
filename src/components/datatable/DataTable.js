@@ -116,31 +116,30 @@ function DataTable({
 
   useEffect(() => {
     scrollToIndex(lastClickedDataIndex);
-  },[columnsShow, preview])
+  }, [columnsShow, preview, scrollToIndex]);
 
   const scrollToIndex = useCallback(
     (index) => {
-      if(index){
-        setLastClickedDataIndex(index);
+      if (index) {
         const state = dataTableState.current;
-        const displayedRows = state.displayData;
+        const displayedRows = state.data;
         const displayedRowIndex =
-        displayedRows.findIndex((row) => row.dataIndex === index - 1) + 1;
+          displayedRows.findIndex((row) => row.index === index - 1) + 1;
         const newPage = Math.floor(
-        displayedRowIndex / dataTableElement.current.state.rowsPerPage
-      );
-      setNeedToScroll(true);
-      changePage(newPage);
-      }     
+          displayedRowIndex / dataTableElement.current.state.rowsPerPage
+        );
+        setNeedToScroll(true);
+        changePage(newPage);
+      }
     },
     [dataTableElement, changePage, dataTableState]
   );
 
-  const scrollToLastClicked = () => {
+  const scrollToLastClicked = useCallback(() => {
     if (lastClickedDataIndex) {
       scrollToIndex(lastClickedDataIndex);
     }
-  };
+  }, [lastClickedDataIndex, scrollToIndex]);
 
   // Push "isChanged," so app knows when SAVE button is enabled.
   // See also Translatable in markdown-translatable.
@@ -184,12 +183,12 @@ function DataTable({
         _columnsShow = _columnsShow.filter((col) => col !== changedColumn);
       }
       setColumnsShow(_columnsShow);
-      scrollToLastClicked()
+      scrollToLastClicked();
     },
-    [columnsShow]
+    [columnsShow, scrollToLastClicked]
   );
 
-  if(columnsShow){
+  if (columnsShow) {
     localStorage.setItem('StoredColumn', columnsShow);
   }
 
@@ -198,14 +197,14 @@ function DataTable({
     if (dataTableElement && dataTableElement.current) {
       dataTableElement.current.tableRef.scrollIntoView({ block: 'end' });
     }
-      currentPageNumber.current = action
+    currentPageNumber.current = action
   };
 
   // Scroll to Top when navigating to next page
   const scrollToTop = (action) => {
     if (dataTableElement && dataTableElement.current) {
       dataTableElement.current.tableRef.scrollIntoView({ block: 'start' });
-    } 
+    }
     currentPageNumber.current = action
   };
 
@@ -286,38 +285,38 @@ function DataTable({
         scrollToLastClicked();
       }
     },
-    onRowClick: (rowData,{ dataIndex }) => {
+    onRowClick: (rowData, { dataIndex }) => {
       setLastClickedDataIndex(dataIndex);
     },
     onChangePage: (action) => {
       const prevPageNumber = currentPageNumber.current
-        if (needToScroll) {
-          setNeedToScroll(false);
-          const element = document.getElementById(
-            "MUIDataTableBodyRow-" + lastClickedDataIndex
-          );
-          if (element) {
-            element.scrollIntoView();
-            const parentRow = element.closest('tr');
-            const allRows = parentRow.querySelectorAll('td > div > div > div');
-            allRows.forEach((rowCell) => {
-              rowCell.classList.add('show');
+      if (needToScroll) {
+        setNeedToScroll(false);
+        const element = document.getElementById(
+          "MUIDataTableBodyRow-" + lastClickedDataIndex
+        );
+        if (element) {
+          element.scrollIntoView();
+          const parentRow = element.closest('tr');
+          const allRows = parentRow.querySelectorAll('td > div > div > div');
+          allRows.forEach((rowCell) => {
+            rowCell.classList.add('show');
+          });
+          const firstEditableContent = parentRow.querySelector('[contenteditable="true"]');
+          if (firstEditableContent) {
+            setTimeout(() => {
+              // Use setTimeout because https://stackoverflow.com/a/37162116/545378
+              firstEditableContent.focus();
             });
-            const firstEditableContent = parentRow.querySelector('[contenteditable="true"]');
-            if ( firstEditableContent ) {
-              setTimeout(() => {
-                // Use setTimeout because https://stackoverflow.com/a/37162116/545378
-                firstEditableContent.focus();
-              });
-            }
           }
-        }else{
-          if (action >= prevPageNumber){
+        }
+      } else {
+        if (action >= prevPageNumber) {
           scrollToTop(action);
-        }else{
+        } else {
           scrollToBottom(action)
         }
-        }
+      }
     },
     download: false,
     print: false,

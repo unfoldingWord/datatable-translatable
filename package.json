@@ -1,6 +1,6 @@
 {
   "name": "datatable-translatable",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "license": "MIT",
   "description": "A Component Library for Translating DataTables using React and MaterialUI.",
   "homepage": "https://datatable-translatable.netlify.com/",
