@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useEffect,
 } from "react";
+
 import isEqual from "lodash.isequal";
 import useDeepEffect from "use-deep-compare-effect";
 import PropTypes from "prop-types";
@@ -154,11 +155,16 @@ function DataTable({
 
   // _onSave is called by Toolbar; cellEdit is called by DataTable.
   // State (contents) are different at these two times. (cellEdit lags)
-  const _onSave = useCallback(() => {
+  const _onSave = useCallback(async () => {
     const savedFile = actions.targetFileSave();
-    onSave(savedFile);
+    const saved = await onSave(savedFile);
+    if(!markdownActions || !markdownActions.setIsChanged)
+      return;
 
-    if (markdownActions && markdownActions.setIsChanged) {
+    if (saved === false) {
+      markdownActions.setIsChanged(true);
+    }
+    else {
       markdownActions.setIsChanged(false);
     }
   }, [actions, onSave, markdownActions]);

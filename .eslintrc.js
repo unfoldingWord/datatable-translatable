@@ -2,7 +2,6 @@ module.exports = {
   'extends': [
     'eslint:recommended',
     'plugin:react/recommended',
-    '@unfoldingword',
   ],
   'plugins': [
     'react',

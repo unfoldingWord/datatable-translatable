@@ -26,6 +26,7 @@ export function DataTableContextProvider({
   },
 }) {
   const [data, setData] = useState({});
+  
   const rowsReducer = (rows, action) => {
     let _rows;
     const { type, value } = action;
