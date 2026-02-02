@@ -56,8 +56,8 @@ function Component() {
     rowHeader,
   };
 
-  const onSave = (_savedFile) => {
-    setSavedFile(_savedFile);
+  const onSave = async (_savedFile) => {
+    setSavedFile(_savedFile); 
     alert(_savedFile);
   };
 

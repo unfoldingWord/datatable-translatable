@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import React, { memo, useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Typography } from '@material-ui/core';
 import isEqual from 'lodash.isequal';
@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 
 import { BlockEditable, MarkdownContext } from 'markdown-translatable';
 import useStyles from './styles';
+import { DataTableContext } from '../datatable/DataTable.context';
 
 // file to memory
 const inputFilters = [
@@ -135,18 +136,37 @@ function Cell(props) {
     columnsFilterOptions,
     generateRowId = () => {},
     originalFontFamily,
-  translationFontFamily,
+    translationFontFamily,
   } = props;
 
   const classes = useStyles();
   const [original, translation] = value.split(delimiters.cell);
 
-  function handleEdit(markdown){
-    const _markdown = markdown.replace(/^\u00A0/,'');
+  const { state: { isChanged } } = useContext(MarkdownContext);
 
-    onEdit({
-      rowIndex, columnIndex: columnIndex - 1, value: _markdown,
-    });
+  const savedTranslation = useRef(null);
+
+  useEffect(() => {
+    savedTranslation.current = translation;
+  }, []);
+
+  useEffect(() => {
+    if (!isChanged) {
+      savedTranslation.current = translation;
+    }
+  }, [isChanged, translation]);
+
+
+  function handleEdit(markdown){
+    const _markdown = markdown.replace(/^\u00A0/, '');
+
+
+
+    if (savedTranslation.current !== _markdown) {
+      onEdit({
+        rowIndex, columnIndex: columnIndex - 1, value: _markdown, savedTranslation: savedTranslation.current,
+      });
+    }
   }
 
   return (
