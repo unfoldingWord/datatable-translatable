@@ -116,31 +116,30 @@ function DataTable({
 
   useEffect(() => {
     scrollToIndex(lastClickedDataIndex);
-  },[columnsShow, preview])
+  }, [columnsShow, lastClickedDataIndex, preview, scrollToIndex]);
 
   const scrollToIndex = useCallback(
     (index) => {
-      if(index){
-        setLastClickedDataIndex(index);
+      if (index) {
         const state = dataTableState.current;
-        const displayedRows = state.displayData;
+        const displayedRows = state.data;
         const displayedRowIndex =
-        displayedRows.findIndex((row) => row.dataIndex === index - 1) + 1;
+          displayedRows.findIndex((row) => row.index === index - 1) + 1;
         const newPage = Math.floor(
-        displayedRowIndex / dataTableElement.current.state.rowsPerPage
-      );
-      setNeedToScroll(true);
-      changePage(newPage);
-      }     
+          displayedRowIndex / dataTableElement.current.state.rowsPerPage
+        );
+        setNeedToScroll(true);
+        changePage(newPage);
+      }
     },
     [dataTableElement, changePage, dataTableState]
   );
 
-  const scrollToLastClicked = () => {
+  const scrollToLastClicked = useCallback(() => {
     if (lastClickedDataIndex) {
       scrollToIndex(lastClickedDataIndex);
     }
-  };
+  }, [lastClickedDataIndex, scrollToIndex]);
 
   // Push "isChanged," so app knows when SAVE button is enabled.
   // See also Translatable in markdown-translatable.
@@ -184,9 +183,9 @@ function DataTable({
         _columnsShow = _columnsShow.filter((col) => col !== changedColumn);
       }
       setColumnsShow(_columnsShow);
-      scrollToLastClicked()
+      scrollToLastClicked();
     },
-    [columnsShow]
+    [columnsShow, scrollToLastClicked]
   );
 
   if(columnsShow){
